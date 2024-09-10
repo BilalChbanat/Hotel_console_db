@@ -1,50 +1,61 @@
 package Repositories;
 
-import java.time.LocalDate;
 
-public class ReservationRepository {
+import classes.Hotel;
+import interfaces.ReservationRepositoryInterface;
+import org.example.DatabaseConnection;
 
-    private int id;
-    private String client;
-    private LocalDate check_in_date;
-    private LocalDate check_out_date;
+import java.sql.*;
+import java.util.HashMap;
 
-    public ReservationRepository(int id, String client, LocalDate check_in_date, LocalDate check_out_date) {
-        this.id = id;
-        this.client = client;
-        this.check_in_date = check_in_date;
-        this.check_out_date = check_out_date;
+public class ReservationRepository implements ReservationRepositoryInterface {
+
+    private Connection connection;
+
+    public ReservationRepository() {
+        this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    public int getId() {
-        return id;
+
+    @Override
+    public Hotel findById(int id) {
+        Hotel hotel = null;
+        String query = "SELECT * FROM hotels WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                hotel = new Hotel(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("location"),
+                        resultSet.getInt("rating")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("Error finding hotel: " + e.getMessage());
+        }
+        return hotel;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public void create(Hotel hotel) {
+
     }
 
-    public String getClient() {
-        return client;
+    @Override
+    public HashMap<Integer, Hotel> findAll() {
+        return null;
     }
 
-    public void setClient(String client) {
-        this.client = client;
+    @Override
+    public void update(Hotel hotel) {
+
     }
 
-    public LocalDate getCheck_in_date() {
-        return check_in_date;
-    }
+    @Override
+    public void delete(Hotel hotel) {
 
-    public void setCheck_in_date(LocalDate check_in_date) {
-        this.check_in_date = check_in_date;
-    }
-
-    public LocalDate getCheck_out_date() {
-        return check_out_date;
-    }
-
-    public void setCheck_out_date(LocalDate check_out_date) {
-        this.check_out_date = check_out_date;
     }
 }

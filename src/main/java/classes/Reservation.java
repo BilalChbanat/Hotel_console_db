@@ -5,11 +5,11 @@ import java.time.LocalDate;
 public class Reservation {
     private int id;
     private Room room;
-    private String client;
+    private Customer client;
     private LocalDate check_in_date;
     private LocalDate check_out_date;
 
-    public Reservation(int id, Room room, String client, LocalDate check_in_date, LocalDate check_out_date) {
+    public Reservation(int id, Room room, Customer client, LocalDate check_in_date, LocalDate check_out_date) {
         this.id = id;
         this.room = room;
         this.client = client;
@@ -33,11 +33,11 @@ public class Reservation {
         this.room = room;
     }
 
-    public String getClient() {
+    public Customer getClient() {
         return client;
     }
 
-    public void setClient(String client) {
+    public void setClient(Customer client) {
         this.client = client;
     }
 
@@ -55,5 +55,15 @@ public class Reservation {
 
     public void setCheck_out_date(LocalDate check_out_date) {
         this.check_out_date = check_out_date;
+    }
+
+    @Override
+    public String toString() {
+        return "\nReservation" +
+                "id:" + id +
+                ", room:" + room +
+                ", client:'" + client + '\'' +
+                ", Check In:" + check_in_date +
+                ", Check Out:" + check_out_date;
     }
 }
