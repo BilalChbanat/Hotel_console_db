@@ -6,13 +6,13 @@ public class Hotel {
     private String name;
     private String address;
     private String phone;
-    private String email;
-    public Hotel(int id, String name, String address, String phone, String email) {
+
+    public Hotel(int id, String name, String address, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
-        this.email = email;
+
     }
     public int getId() {
         return id;
@@ -45,21 +45,13 @@ public class Hotel {
         this.phone = phone;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Override
     public String toString() {
         return "\n Hotel" +
                 "id:" + id +
                 ", name:'" + name + '\'' +
                 ", address:'" + address + '\'' +
-                ", phone:'" + phone + '\'' +
-                ", email:'" + email + '\'';
+                ", phone:'" + phone + '\''
+                ;
     }
 }
