@@ -2,43 +2,43 @@ package classes;
 
 public class Customer {
     private int id;
-    private String cin;
-    private String name;
+    private String firstname;
+    private String lastname;
 
-    public Customer(int id, String cin, String name) {
+    public Customer(int id, String firstname, String lastname) {
         this.id = id;
-        this.cin = cin;
-        this.name = name;
+        this.firstname = firstname;
+        this.lastname = lastname;
     }
 
     public int getId() {
         return id;
     }
 
-    private void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getCin() {
-        return cin;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setCin(String cin) {
-        this.cin = cin;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getName() {
-        return name;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     @Override
     public String toString() {
         return "\nCustomer:" +
-                ", cin:'" + cin + '\'' +
-                ", name:'" + name + '\'';
+                "id=" + id +
+                ", name:'" + firstname + ' ' + lastname + '\'';
     }
 }
