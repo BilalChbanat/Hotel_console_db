@@ -1,14 +1,13 @@
 package interfaces;
 
-import classes.Hotel;
-
+import classes.Reservation;
 import java.util.HashMap;
 
 public interface ReservationRepositoryInterface {
 
-    Hotel findById(int id);
-    void create(Hotel hotel);
-    HashMap<Integer, Hotel> findAll();
-    void update(Hotel hotel);
-    void delete(Hotel hotel);
+    Reservation findById(int id);
+    void create(Reservation reservation);
+    HashMap<Integer, Reservation> findAll();
+    void update(Reservation reservation);
+    void delete(Reservation reservation);
 }

@@ -1,7 +1,9 @@
 package Repositories;
 
-
 import classes.Hotel;
+import classes.Reservation;
+import classes.Room;
+import classes.Customer;
 import interfaces.ReservationRepositoryInterface;
 import org.example.DatabaseConnection;
 
@@ -10,52 +12,29 @@ import java.util.HashMap;
 
 public class ReservationRepository implements ReservationRepositoryInterface {
 
-    private Connection connection;
-
-    public ReservationRepository() {
-        this.connection = DatabaseConnection.getInstance().getConnection();
-    }
-
 
     @Override
-    public Hotel findById(int id) {
-        Hotel hotel = null;
-        String query = "SELECT * FROM hotels WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                hotel = new Hotel(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("location"),
-                        resultSet.getInt("rating")
-                );
-            }
-        } catch (SQLException e) {
-            System.out.println("Error finding hotel: " + e.getMessage());
-        }
-        return hotel;
-    }
-
-    @Override
-    public void create(Hotel hotel) {
-
-    }
-
-    @Override
-    public HashMap<Integer, Hotel> findAll() {
+    public Reservation findById(int id) {
         return null;
     }
 
     @Override
-    public void update(Hotel hotel) {
+    public void create(Reservation reservation) {
 
     }
 
     @Override
-    public void delete(Hotel hotel) {
+    public HashMap<Integer, Reservation> findAll() {
+        return null;
+    }
+
+    @Override
+    public void update(Reservation Reservation) {
+
+    }
+
+    @Override
+    public void delete(Reservation Reservation) {
 
     }
 }
