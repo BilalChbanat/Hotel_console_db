@@ -5,6 +5,11 @@ public class Customer {
     private String firstname;
     private String lastname;
 
+    public Customer(String firstname, String lastname) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+
     public Customer(int id, String firstname, String lastname) {
         this.id = id;
         this.firstname = firstname;
@@ -37,8 +42,9 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "\nCustomer:" +
-                "id=" + id +
-                ", name:'" + firstname + ' ' + lastname + '\'';
+        return "\nCustomer {" +
+                "ID: " + id +
+                ", Name: '" + firstname + " " + lastname + '\'' +
+                '}';
     }
 }
