@@ -4,6 +4,7 @@ import Repositories.HotelRepository;
 import classes.Hotel;
 
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class HotelService {
@@ -43,6 +44,7 @@ public class HotelService {
                     break;
                 case 5:
                     System.out.println("Exiting...");
+                    scanner.close();
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -57,6 +59,11 @@ public class HotelService {
         String address = scanner.nextLine();
         System.out.print("Enter hotel phone: ");
         String phone = scanner.nextLine();
+
+        if (name.isEmpty() || address.isEmpty() || phone.isEmpty()) {
+            System.out.println("All fields must be filled.");
+            return;
+        }
 
         Hotel hotel = new Hotel(name, address, phone);
         hotelRepository.create(hotel);
@@ -75,41 +82,44 @@ public class HotelService {
     }
 
     private void updateHotel() {
-        System.out.print("Enter hotel ID to update: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-
-        Hotel hotel = hotelRepository.findById(id);
-
-        if (hotel == null) {
-            System.out.println("Hotel not found.");
-            return;
-        }
-
-        System.out.println("Current hotel details: " + hotel.toString());
-
-        System.out.print("Enter new name : ");
-        String name = scanner.nextLine();
-        if (!name.isEmpty()) {
-            hotel.setName(name);
-        }
-
-        System.out.print("Enter new address: ");
-        String address = scanner.nextLine();
-        if (!address.isEmpty()) {
-            hotel.setAddress(address);
-        }
-
-        System.out.print("Enter new phone : ");
-        String phone = scanner.nextLine();
-        if (!phone.isEmpty()) {
-            hotel.setPhone(phone);
-        }
-
         try {
+            System.out.print("Enter hotel ID to update: ");
+            int id = scanner.nextInt();
+            scanner.nextLine();
+
+            Hotel hotel = hotelRepository.findById(id);
+
+            if (hotel == null) {
+                System.out.println("Hotel not found.");
+                return;
+            }
+
+            System.out.println("Current hotel details: " + hotel);
+
+            System.out.print("Enter new name (leave blank to keep current): ");
+            String name = scanner.nextLine();
+            if (!name.isEmpty()) {
+                hotel.setName(name);
+            }
+
+            System.out.print("Enter new address (leave blank to keep current): ");
+            String address = scanner.nextLine();
+            if (!address.isEmpty()) {
+                hotel.setAddress(address);
+            }
+
+            System.out.print("Enter new phone (leave blank to keep current): ");
+            String phone = scanner.nextLine();
+            if (!phone.isEmpty()) {
+                hotel.setPhone(phone);
+            }
+
             hotelRepository.update(hotel);
             System.out.println("Hotel updated successfully!");
             System.out.println("Updated hotel details: " + hotel);
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a valid number for hotel ID.");
+            scanner.nextLine();
         } catch (Exception e) {
             System.out.println("Failed to update hotel: " + e.getMessage());
         }
@@ -118,7 +128,7 @@ public class HotelService {
     private void deleteHotel() {
         System.out.print("Enter hotel ID to delete: ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         Hotel hotel = hotelRepository.findById(id);
         if (hotel == null) {

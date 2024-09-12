@@ -2,14 +2,13 @@ package classes;
 
 public class Room {
 
-    private int room_id;
+    private int id;
     private double price;
     private int capacity;
     private boolean isAvailable;
     private Hotel hotel;
 
-    public Room(int room_id, double price, int capacity,boolean isAvailable, Hotel hotel) {
-        this.room_id = room_id;
+    public Room( double price, int capacity,boolean isAvailable, Hotel hotel) {
         this.isAvailable = isAvailable;
         this.price = price;
         this.capacity = capacity;
@@ -17,13 +16,12 @@ public class Room {
 
     }
 
-    public int getRoom_id() {
-
-        return room_id;
+    public int getId() {
+        return id;
     }
 
-    private void setRoom_id(int room_id) {
-        this.room_id = room_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getPrice() {
@@ -56,5 +54,16 @@ public class Room {
 
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
+    }
+
+    @Override
+    public String toString() {
+        return "\nRoom{" +
+                "id:" + id +
+                ", price:" + price+" MAD"+
+                ", capacity:" + capacity +
+                ", isAvailable:" + isAvailable +
+                ", hotel:" + hotel.getName() +
+                '}';
     }
 }
