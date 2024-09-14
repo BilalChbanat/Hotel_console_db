@@ -7,6 +7,7 @@ import classes.Room;
 import classes.Customer;
 import interfaces.ReservationRepositoryInterface;
 import Repositories.ReservationRepository;
+import validations.Tarifs;
 import validations.Validate;
 
 import java.time.LocalDate;
@@ -65,31 +66,35 @@ public class ReservationService {
             int roomId = scanner.nextInt();
             System.out.print("Enter client ID: ");
             int clientId = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
             System.out.print("Enter check-in date (YYYY-MM-DD): ");
             String checkInDate = scanner.nextLine();
             System.out.print("Enter check-out date (YYYY-MM-DD): ");
             String checkOutDate = scanner.nextLine();
 
+            Room room = new RoomRepository().findById(roomId);
+            Customer customer = new CustomerRepository().findById(clientId);
             LocalDate checkIn = LocalDate.parse(checkInDate);
             LocalDate checkOut = LocalDate.parse(checkOutDate);
 
-            Room room = new RoomRepository().findById(roomId); // Get the room
-            Customer customer = new CustomerRepository().findById(clientId); // Get the client
+            double adjustedPrice = Tarifs.adjustPrice(room.getPrice(), checkIn, checkOut);
+            System.out.println("Adjusted room price: " + adjustedPrice);
 
-            List<Reservation> existingReservations = reservationRepository.findByRoom(roomId);
+            Reservation reservation = new Reservation(
+                    0,
+                    room,
+                    customer,
+                    checkIn,
+                    checkOut
+            );
 
-            if (Validate.interval(existingReservations, checkIn, checkOut)) {
-                Reservation reservation = new Reservation(0, room, customer, checkIn, checkOut);
-                reservationRepository.create(reservation);
-                System.out.println("Reservation added successfully.");
-            } else {
-                System.out.println("The room is not available for the selected dates.");
-            }
+            reservationRepository.create(reservation);
+            System.out.println("Reservation added successfully.");
         } catch (Exception e) {
             System.out.println("Failed to add reservation: " + e.getMessage());
         }
     }
+
 
     private void viewAllReservations() {
         HashMap<Integer, Reservation> reservations = reservationRepository.findAll();
@@ -106,7 +111,7 @@ public class ReservationService {
         try {
             System.out.print("Enter reservation ID to update: ");
             int id = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             Reservation reservation = reservationRepository.findById(id);
             if (reservation == null) {
@@ -143,7 +148,6 @@ public class ReservationService {
                 reservation.setCheck_out_date(LocalDate.parse(checkOutDate));
             }
 
-            // Validate the updated dates and availability
             List<Reservation> existingReservations = reservationRepository.findByRoom(reservation.getRoom().getId());
             if (Validate.interval(existingReservations, reservation.getCheck_in_date(), reservation.getCheck_out_date())) {
                 reservationRepository.update(reservation);
@@ -160,7 +164,7 @@ public class ReservationService {
         try {
             System.out.print("Enter reservation ID to delete: ");
             int id = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             Reservation reservation = reservationRepository.findById(id);
             if (reservation == null) {
