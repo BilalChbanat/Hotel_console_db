@@ -2,6 +2,7 @@ package interfaces;
 
 import classes.Reservation;
 import java.util.HashMap;
+import java.util.List;
 
 public interface ReservationRepositoryInterface {
 
@@ -10,4 +11,7 @@ public interface ReservationRepositoryInterface {
     HashMap<Integer, Reservation> findAll();
     void update(Reservation reservation);
     void delete(Reservation reservation);
+
+
+    List<Reservation> findByRoom(int roomId);
 }

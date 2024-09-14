@@ -7,7 +7,9 @@ import interfaces.ReservationRepositoryInterface;
 import org.example.DatabaseConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ReservationRepository implements ReservationRepositoryInterface {
 
@@ -105,5 +107,35 @@ public class ReservationRepository implements ReservationRepositoryInterface {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Finds all reservations for a specific room.
+     *
+     * @param roomId The ID of the room to check for reservations.
+     * @return A list of reservations for the given room.
+     */
+    public List<Reservation> findByRoom(int roomId) {
+        List<Reservation> reservations = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM reservations WHERE room_id = ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setInt(1, roomId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Reservation reservation = new Reservation(
+                        rs.getInt("id"),
+                        new RoomRepository().findById(rs.getInt("room_id")),
+                        new CustomerRepository().findById(rs.getInt("user_id")),
+                        rs.getDate("check_in").toLocalDate(),
+                        rs.getDate("check_out").toLocalDate()
+                );
+                reservations.add(reservation);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservations;
     }
 }

@@ -3,11 +3,15 @@ package Services;
 import Repositories.CustomerRepository;
 import Repositories.RoomRepository;
 import classes.Reservation;
+import classes.Room;
+import classes.Customer;
 import interfaces.ReservationRepositoryInterface;
 import Repositories.ReservationRepository;
+import validations.Validate;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class ReservationService {
@@ -67,16 +71,21 @@ public class ReservationService {
             System.out.print("Enter check-out date (YYYY-MM-DD): ");
             String checkOutDate = scanner.nextLine();
 
-            Reservation reservation = new Reservation(
-                    0, // ID will be auto-generated
-                    new RoomRepository().findById(roomId), // Assuming RoomRepository exists
-                    new CustomerRepository().findById(clientId), // Assuming CustomerRepository exists
-                    LocalDate.parse(checkInDate),
-                    LocalDate.parse(checkOutDate)
-            );
+            LocalDate checkIn = LocalDate.parse(checkInDate);
+            LocalDate checkOut = LocalDate.parse(checkOutDate);
 
-            reservationRepository.create(reservation);
-            System.out.println("Reservation added successfully.");
+            Room room = new RoomRepository().findById(roomId); // Get the room
+            Customer customer = new CustomerRepository().findById(clientId); // Get the client
+
+            List<Reservation> existingReservations = reservationRepository.findByRoom(roomId);
+
+            if (Validate.interval(existingReservations, checkIn, checkOut)) {
+                Reservation reservation = new Reservation(0, room, customer, checkIn, checkOut);
+                reservationRepository.create(reservation);
+                System.out.println("Reservation added successfully.");
+            } else {
+                System.out.println("The room is not available for the selected dates.");
+            }
         } catch (Exception e) {
             System.out.println("Failed to add reservation: " + e.getMessage());
         }
@@ -107,15 +116,19 @@ public class ReservationService {
 
             System.out.println("Current reservation details: " + reservation);
             System.out.print("Enter new room ID (leave blank to keep current): ");
-            String roomId = scanner.nextLine();
-            if (!roomId.isEmpty()) {
-                reservation.setRoom(new RoomRepository().findById(Integer.parseInt(roomId)));
+            String roomIdInput = scanner.nextLine();
+            if (!roomIdInput.isEmpty()) {
+                int roomId = Integer.parseInt(roomIdInput);
+                Room room = new RoomRepository().findById(roomId);
+                reservation.setRoom(room);
             }
 
             System.out.print("Enter new client ID (leave blank to keep current): ");
-            String clientId = scanner.nextLine();
-            if (!clientId.isEmpty()) {
-                reservation.setClient(new CustomerRepository().findById(Integer.parseInt(clientId)));
+            String clientIdInput = scanner.nextLine();
+            if (!clientIdInput.isEmpty()) {
+                int clientId = Integer.parseInt(clientIdInput);
+                Customer customer = new CustomerRepository().findById(clientId);
+                reservation.setClient(customer);
             }
 
             System.out.print("Enter new check-in date (leave blank to keep current, YYYY-MM-DD): ");
@@ -130,8 +143,14 @@ public class ReservationService {
                 reservation.setCheck_out_date(LocalDate.parse(checkOutDate));
             }
 
-            reservationRepository.update(reservation);
-            System.out.println("Reservation updated successfully.");
+            // Validate the updated dates and availability
+            List<Reservation> existingReservations = reservationRepository.findByRoom(reservation.getRoom().getId());
+            if (Validate.interval(existingReservations, reservation.getCheck_in_date(), reservation.getCheck_out_date())) {
+                reservationRepository.update(reservation);
+                System.out.println("Reservation updated successfully.");
+            } else {
+                System.out.println("The room is not available for the selected dates.");
+            }
         } catch (Exception e) {
             System.out.println("Failed to update reservation: " + e.getMessage());
         }

@@ -5,7 +5,6 @@ import Repositories.RoomRepository;
 import classes.Hotel;
 import classes.Room;
 
-import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -13,58 +12,61 @@ import java.util.Scanner;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
-    private final Scanner scanner;
 
     public RoomService() {
         this.roomRepository = new RoomRepository();
         this.hotelRepository = new HotelRepository();
-        this.scanner = new Scanner(System.in);
     }
 
-    public void displayMenu() {
-        while (true) {
-            System.out.println("\n═════════════════════ Room Management ═════════════════════");
-            System.out.println("\n║\t1: Add a new room\t\t\t\t║");
-            System.out.println("║\t2: View all rooms\t\t\t\t║");
-            System.out.println("║\t3: View all rooms by hotel\t\t║");
-            System.out.println("║\t4: Update a room\t\t\t\t║");
-            System.out.println("║\t5: Delete a room\t\t\t\t║");
-            System.out.println("║\t6: Exit\t\t\t\t\t\t\t║");
-            System.out.print("\t Enter your choice: ");
+    public void displayMenu(Scanner sc) {
+        int choice;
+        do {
+            System.out.println("\n║\t1: Add a new room\t\t\t║");
+            System.out.println("║\t2: View all rooms\t\t\t║");
+            System.out.println("║\t3: View rooms by hotel\t\t║");
+            System.out.println("║\t4: Update a room\t\t\t║");
+            System.out.println("║\t5: Delete a room\t\t\t║");
+            System.out.println("║\t6: Exit\t\t\t\t\t\t║");
+            System.out.print("Enter your choice: ");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                choice = sc.nextInt();
+                sc.nextLine();
 
-            switch (choice) {
-                case 1:
-                    addRoom();
-                    break;
-                case 2:
-                    viewAllRooms();
-                    break;
-                case 3:
-                    viewRoomsByHotel();
-                    break;
-                case 4:
-                    updateRoom();
-                    break;
-                case 5:
-                    deleteRoom();
-                    break;
-                case 6:
-                    System.out.println("Exiting...");
-                    scanner.close();
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+                switch (choice) {
+                    case 1:
+                        addRoom(sc);
+                        break;
+                    case 2:
+                        viewAllRooms();
+                        break;
+                    case 3:
+                        viewRoomsByHotel(sc);
+                        break;
+                    case 4:
+                        updateRoom(sc);
+                        break;
+                    case 5:
+                        deleteRoom(sc);
+                        break;
+                    case 6:
+                        System.out.println("Exiting...");
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Try again.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 6.");
+                sc.nextLine();
+                choice = 0;
             }
-        }
+        } while (choice != 6);
     }
 
-    private void addRoom() {
+    private void addRoom(Scanner sc) {
         System.out.print("Enter hotel ID: ");
-        int hotelId = scanner.nextInt();
-        scanner.nextLine();
+        int hotelId = sc.nextInt();
+        sc.nextLine();
 
         Hotel hotel = hotelRepository.findById(hotelId);
         if (hotel == null) {
@@ -73,12 +75,12 @@ public class RoomService {
         }
 
         System.out.print("Enter room price: ");
-        double price = scanner.nextDouble();
+        double price = sc.nextDouble();
         System.out.print("Enter room capacity: ");
-        int capacity = scanner.nextInt();
+        int capacity = sc.nextInt();
         System.out.print("Is the room available (true/false): ");
-        boolean isAvailable = scanner.nextBoolean();
-        scanner.nextLine();  // Consume newline
+        boolean isAvailable = sc.nextBoolean();
+        sc.nextLine();
 
         Room room = new Room(price, capacity, isAvailable, hotel);
         roomRepository.create(room);
@@ -96,11 +98,10 @@ public class RoomService {
         }
     }
 
-
-    private void viewRoomsByHotel() {
+    private void viewRoomsByHotel(Scanner sc) {
         System.out.print("Enter hotel ID: ");
-        int hotelId = scanner.nextInt();
-        scanner.nextLine();
+        int hotelId = sc.nextInt();
+        sc.nextLine();
 
         Hotel hotel = hotelRepository.findById(hotelId);
         if (hotel == null) {
@@ -118,11 +119,11 @@ public class RoomService {
         }
     }
 
-    private void updateRoom() {
+    private void updateRoom(Scanner sc) {
         try {
             System.out.print("Enter room ID to update: ");
-            int roomId = scanner.nextInt();
-            scanner.nextLine();
+            int roomId = sc.nextInt();
+            sc.nextLine();
 
             Room room = roomRepository.findById(roomId);
             if (room == null) {
@@ -133,19 +134,19 @@ public class RoomService {
             System.out.println("Current room details: " + room);
 
             System.out.print("Enter new price (leave blank to keep current): ");
-            String input = scanner.nextLine();
+            String input = sc.nextLine();
             if (!input.isEmpty()) {
                 room.setPrice(Double.parseDouble(input));
             }
 
             System.out.print("Enter new capacity (leave blank to keep current): ");
-            input = scanner.nextLine();
+            input = sc.nextLine();
             if (!input.isEmpty()) {
                 room.setCapacity(Integer.parseInt(input));
             }
 
             System.out.print("Enter new availability (true/false, leave blank to keep current): ");
-            input = scanner.nextLine();
+            input = sc.nextLine();
             if (!input.isEmpty()) {
                 room.setAvailable(Boolean.parseBoolean(input));
             }
@@ -155,16 +156,16 @@ public class RoomService {
             System.out.println("Updated room details: " + room);
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a valid number.");
-            scanner.nextLine();
+            sc.nextLine();
         } catch (Exception e) {
             System.out.println("Failed to update room: " + e.getMessage());
         }
     }
 
-    private void deleteRoom() {
+    private void deleteRoom(Scanner sc) {
         System.out.print("Enter room ID to delete: ");
-        int roomId = scanner.nextInt();
-        scanner.nextLine();
+        int roomId = sc.nextInt();
+        sc.nextLine();
 
         Room room = roomRepository.findById(roomId);
         if (room == null) {
@@ -178,6 +179,7 @@ public class RoomService {
 
     public static void main(String[] args) {
         RoomService roomService = new RoomService();
-        roomService.displayMenu();
+        Scanner sc = new Scanner(System.in);
+        roomService.displayMenu(sc);
     }
 }
